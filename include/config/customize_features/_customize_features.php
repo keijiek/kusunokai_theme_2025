@@ -11,11 +11,10 @@ function wpautop_filter($content)
   global $post;
   $remove_filter = false;
 
-  //自動整形を無効にする投稿タイプを記述 ＝固定ページ
-  // $arr_types = array('page');
+  //自動整形を無効にする投稿タイプを arr_type に書く
   $arr_types = ['page'];
-  $post_type = get_post_type($post->ID);
-  if (in_array($post_type, $arr_types)) {
+  $current_post_type = get_post_type($post->ID);
+  if (in_array($current_post_type, $arr_types)) {
     $remove_filter = true;
   }
 

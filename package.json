@@ -2,14 +2,16 @@
   "scripts": {
     "tw": "vite build --mode css --watch",
     "js": "vite build --mode js --watch",
-    "build": "vite build --watch"
+    "all": "vite build --mode css && vite build --mode js"
   },
   "type": "module",
   "dependencies": {},
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.15",
+    "alpinejs": "^3.14.1",
     "autoprefixer": "^10.4.20",
     "daisyui": "^4.12.12",
+    "flowbite": "^2.5.2",
     "postcss": "^8.4.47",
     "swup": "^4.8.1",
     "tailwindcss": "^3.4.13",

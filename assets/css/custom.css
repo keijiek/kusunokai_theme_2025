@@ -1,0 +1,73 @@
+/*
+header と footer が近すぎると背景画像が重なるので、main 部分に、ある程度の高さを持たせる
+*/
+main {
+  min-height: 300vh;
+}
+
+/*
+上端に fixed してスクロールに追尾する疑似 header の設定
+*/
+.sticky_header {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  transition: transform 0.25s ease-in-out 0s;
+  transform: translateY(-100%);
+}
+
+/* js で activate されて上から登場したheader のY軸上の座標を指定 */
+.sticky_header.js_active {
+  transform: translateY(0);
+}
+/* アドミンバーが存在する場合、その高さ(32px)のぶん、Y軸上座標を修正 */
+body:has(#wpadminbar) > .el_relativeCotentWrap > .sticky_header.js_active {
+  transform: translateY(32px);
+}
+/* 横幅782以下ではアドミンバーの高さが46pxになるので、それに合わせてY軸上座標を修正 */
+@media screen and (max-width: 782px) {
+  body:has(#wpadminbar) > .el_relativeCotentWrap > .sticky_header.js_active {
+    transform: translateY(46px);
+  }
+}
+/* 横幅600以下ではアドミンバーが absolute で上端にくっついて上方へ去る挙動となるので、それに合わせてY軸上座標を修正 */
+@media screen and (max-width: 600px) {
+  body:has(#wpadminbar) > .el_relativeCotentWrap > .sticky_header.js_active {
+    transform: translateY(0px);
+  }
+}
+
+.bl_bg {
+  background-image: url(../images/body_bg.png);
+  background-repeat: repeat-y;
+  background-size: contain;
+  background-position: top;
+  opacity: 0.8;
+}
+
+/* もし、css でヘッダー背景を付けるなら。未使用。aspect-ratio の必要性が難点なので。html ファイルに img タグで書いた */
+.bl_headerBg::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  aspect-ratio: 3840 / 1309;
+  background-image: url(../images/leaf_bird_4k.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
+
+/* もし、css でフッター背景を付けるなら。未使用 */
+.bl_footerBg::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  aspect-ratio: 3840/2713;
+  background-image: url(../images/footer_bg.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  z-index: -1;
+  opacity: 0.8;
+}

@@ -1,49 +1,173 @@
 <?php
-date_default_timezone_set("Asia/Tokyo");
 
 /**
- * 根幹にかかわる定数
+ * デバッグ用
  */
-define('TIME_ZONE_JP', new DateTimeZone('Asia/Tokyo'));
+function vardump(mixed $args)
+{
+  echo ('<pre>');
+  var_dump($args);
+  echo ('</pre>');
+}
 
 
-// /** ************************************************************************
-//  * 定数1 : このテンプレートプロジェクト内の、主要ディレクトリのパス
-//  ************************************************************************ */
-define('__ROOT__',       get_theme_file_uri());
-define('__ASSETS_DIR__', get_theme_file_uri() . '/assets');
-define('__CSS_DIR__',    get_theme_file_uri() . '/assets/css');
-define('__IMG_DIR__',    get_theme_file_uri() . '/assets/images');
-define('__DIST_DIR__',   get_theme_file_uri() . '/assets/dist');
-define('__INC_DIR__',    get_theme_file_uri() . '/include');
-define('HELMET', '/templates/global_header/global_header');
-define('BOOTS', '/templates/global_footer/global_footer');
+/**
+ * デバッグ。ログをファイルに出力。
+ * 改良の余地は多分にあり
+ */
+function vardump_file(mixed $args, string $title = '')
+{
+  // 変数の用意
+  $dir = __DIR__ . '/log/var_dump';
+  $date_time = (new \DateTimeImmutable('now', new DateTimeZone('Asia/Tokyo')));
+  $file_name =  $date_time->format('Ymd_Hi') . ($title ? '_' . $title : '') . '.md';
 
+  // ディレクトリが無ければ作成
+  if (!is_dir($dir)) {
+    mkdir($dir, 0775, true);
+  }
 
-// /** ************************************************************************
-//  * 定数2 : カスタム投稿タイプAと、それに関連付けられたフィールドなどのスラグ
-//  ************************************************************************ */
+  ob_start(); // ob 開始
+  echo ($title ? '# ' . $title . PHP_EOL . PHP_EOL : '');
+  echo ('## ' . $date_time->format('H:i (s.v\s), d\t\h M. Y (e, P)') . PHP_EOL . PHP_EOL);
+  echo ('```bash' . PHP_EOL);
+  var_dump($args);
+  echo ('```' . PHP_EOL);
+  $output = ob_get_contents(); // ob 出力を変数に取得
+  ob_end_clean(); // ob 終了
 
-// /** メニューのロケーション(theme_location) */
-// define('COMMON_MENU', 'common_menu');
-// define('BOOTSTRAP_MENU', 'bootstrap_menu');
-// define('FOOTER_MENU', 'footer_menu');
+  file_put_contents($dir . '/' . $file_name, $output, FILE_APPEND);
+  // 第三引数に定数「FILE_APPEND」を与えれば、第一引数のファイル末尾に出力を追加していく挙動になる。
+}
 
-// /** カスタム投稿 */
+/**
+ * よく使うフォルダのパス
+ */
+define('IMAGES_DIR', get_theme_file_uri('assets/images'));
+
+/* ************************************************************
+ * カスタム投稿のスラグ
+ ************************************************************ */
 define('POST_NEWS_LETTER', 'newsletters');
 define('POST_URGENT_NOTICE', 'urgent_notices');
 define('POST_NOTICE', 'notices');
 
 
+/** ************************************************************************
+ * メニューのスラグ
+ */
+define('GLOBAL_NAV_MENU', 'global_nav_menu');
 
-// /** ************************************************************************
-//  * 初期設定
-//  ************************************************************************ */
-require_once(__DIR__ . '/include/onfig/initial_config.php');
 
-// /**
-//  * 共通関数
-//  */
-// require_once(__DIR__ . '/include/common/common_functions.php');
-// require_once(__DIR__ . '/include/common/common_tags.php');
-// require_once(__DIR__ . '/include/common/common_atts.php');
+/** ************************************************************************
+ * コンフィグ
+ */
+// $GLOBALS['content_width'] の値を設定
+require_once(__DIR__ . '/include/config/SetContentWIdth.class.php');
+new config\SetContentWidth('set_my_content_width', 1536);
+
+// 基本機能のアクティベート
+require_once(__DIR__ . '/include/config/EssentialFeatures.class.php');
+new config\EssentialFeaturesActivator();
+
+// uploads 内のメディアファイルを相対 uri で取得させる(ドメイン部分を消す)
+require_once(__DIR__ . '/include/config/RemoveDomainFromUrl.class.php');
+new config\RemoveDomainFromUrl();
+
+
+/** ************************************************************************
+ * ファイルのエンキュー
+ */
+require_once(__DIR__ . '/include/enqueue_scripts/EnqueueScriptsManager.class.php');
+require_once(__DIR__ . '/include/enqueue_scripts/EnqueueFile.class.php');
+
+use enqueue_scripts\EnqueueScriptsManager;
+use enqueue_scripts\EnqueueFile;
+
+(new EnqueueScriptsManager())
+  ->addFile(new EnqueueFile('tailwind_css', 'assets/dist/tailwindcss/index.css', ['custom_css']))
+  ->addFile(new EnqueueFile('tailwind_js', 'assets/dist/tailwindcss/index.js', []))
+  ->addFile(new EnqueueFile('bundled_js', 'assets/dist/js/index.js', []))
+  ->addFile(new EnqueueFile('custom_css', 'assets/css/custom.css', []))
+  ->excute();
+
+
+/** ************************************************************************
+ * カスタムポストタイプの登録
+ */
+add_action('init', 'register_custom_post_types');
+function register_custom_post_types()
+{
+  register_post_type(
+    POST_NEWS_LETTER,
+    [
+      'label'         => '楠の会ニュース',
+      'public'        => true,
+      'has_archive'   => true,
+      'show_in_rest'  => true,
+      'menu_position' => 05,
+      'menu_icon'     => 'dashicons-media-document',
+      'supports'      => [
+        'title',
+      ]
+    ]
+  );
+
+  register_post_type(
+    POST_URGENT_NOTICE,
+    [
+      'label'         => '緊急告知',
+      'public'        => true,
+      'has_archive'   => false,
+      'show_in_rest'  => true,
+      'menu_position' => 05,
+      'menu_icon'     => 'dashicons-warning',
+      'supports'      => [
+        'title',
+        'editor'
+      ]
+    ]
+  );
+
+  register_post_type(
+    POST_NOTICE,
+    [
+      'label'         => 'お知らせ',
+      'public'        => true,
+      'has_archive'   => true,
+      'show_in_rest'  => true,
+      'menu_position' => 05,
+      'menu_icon'     => 'dashicons-bell',
+      'supports'      => [
+        'title',
+        'editor'
+      ]
+    ]
+  );
+}
+
+
+/** ************************************************************************
+ * メニュー登録
+ */
+add_action('after_setup_theme', 'register_custom_nav_menues');
+function register_custom_nav_menues()
+{
+  register_nav_menus([
+    GLOBAL_NAV_MENU => '共通グローバルメニュー',
+  ]);
+}
+
+/**
+ * 管理画面に依存しない形のメニュー
+ */
+require_once(__DIR__ . '/include/models/NavMenuItem.class.php');
+
+use models\NavMenuItem;
+
+define('NAV_MENU_ITEMS', [
+  new NavMenuItem(home_url('/'), 'ホーム', IMAGES_DIR . '/icon_home.svg', 72, 72),
+  new NavMenuItem(home_url('/' . POST_NEWS_LETTER), '楠の会ニュース', IMAGES_DIR . '/icon_newsLetter.svg', 72, 72),
+  new NavMenuItem(home_url('/' . POST_NOTICE), 'お知らせ', IMAGES_DIR . '/icon_notice.svg', 72, 72),
+  new NavMenuItem(home_url('/about_us'), '宮崎県楠の会について', IMAGES_DIR . '/icon_notice.svg', 72, 72),
+]);
