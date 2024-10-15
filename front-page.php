@@ -1,6 +1,6 @@
 <?php
-require_once(__DIR__ . '/view/FrontPageRenderer.class.php');
+require_once(__DIR__ . '/view/pages/FrontPageRenderer.class.php');
 
-use view\FrontPageRenderer;
+use view\pages\FrontPageRenderer;
 
-(new FrontPageRenderer())->view();
+(new FrontPageRenderer())->render();

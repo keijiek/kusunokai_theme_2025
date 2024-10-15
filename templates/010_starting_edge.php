@@ -1,3 +1,9 @@
+<?php
+
+namespace template;
+
+?>
+
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 

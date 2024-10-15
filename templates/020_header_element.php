@@ -1,3 +1,8 @@
+<?php
+
+namespace template;
+
+?>
 <header>
 
   <div role="presentation">

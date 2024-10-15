@@ -13,6 +13,7 @@
     "daisyui": "^4.12.12",
     "flowbite": "^2.5.2",
     "postcss": "^8.4.47",
+    "rellax": "^1.12.1",
     "swup": "^4.8.1",
     "tailwindcss": "^3.4.13",
     "vite": "^5.4.8"
