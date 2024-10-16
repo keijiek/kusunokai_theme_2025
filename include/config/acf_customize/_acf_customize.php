@@ -8,7 +8,7 @@ use DateTimeImmutable;
 add_filter('acf/load_field/name=newsletter_year', 'initial_config\newsletter_default_year');
 function newsletter_default_year($field)
 {
-  $field['default_value'] = (new DateTimeImmutable('now', TIME_ZONE_JP))->modify('next month')->format('Y');
+  $field['default_value'] = (new DateTimeImmutable())->modify('next month')->format('Y');
   return $field;
 }
 
@@ -16,6 +16,6 @@ function newsletter_default_year($field)
 add_filter('acf/load_field/name=newsletter_month', 'initial_config\newsletter_default_month');
 function newsletter_default_month($field)
 {
-  $field['default_value'] = (new DateTimeImmutable('now', TIME_ZONE_JP))->modify('next month')->format('n');
+  $field['default_value'] = (new DateTimeImmutable())->modify('next month')->format('n');
   return $field;
 }

@@ -3,7 +3,5 @@ export function drawerToggle() {
   const panel = document.getElementById("js_drawerPanel");
   const outerPanel = document.getElementById("js_drawerOuterPanel");
 
-  button.addEventListener("click", (e) => {
-    button.ariaC;
-  });
+  button.addEventListener("click", (e) => {});
 }

@@ -19,7 +19,7 @@ function vardump_file(mixed $args, string $title = '')
 {
   // 変数の用意
   $dir = __DIR__ . '/log/var_dump';
-  $date_time = (new \DateTimeImmutable('now', new DateTimeZone('Asia/Tokyo')));
+  $date_time = new \DateTimeImmutable('now');
   $file_name =  $date_time->format('Ymd_Hi') . ($title ? '_' . $title : '') . '.md';
 
   // ディレクトリが無ければ作成
@@ -62,7 +62,7 @@ define('GLOBAL_NAV_MENU', 'global_nav_menu');
 /** ************************************************************************
  * コンフィグ
  */
-// $GLOBALS['content_width'] の値を設定
+// $GLOBALS['content_width'] の値を設定。ブロックエディタにも影響。
 require_once(__DIR__ . '/include/config/SetContentWIdth.class.php');
 new config\SetContentWidth('set_my_content_width', 1536);
 
@@ -95,56 +95,9 @@ use enqueue_scripts\EnqueueFile;
 /** ************************************************************************
  * カスタムポストタイプの登録
  */
-add_action('init', 'register_custom_post_types');
-function register_custom_post_types()
-{
-  register_post_type(
-    POST_NEWS_LETTER,
-    [
-      'label'         => '楠の会ニュース',
-      'public'        => true,
-      'has_archive'   => true,
-      'show_in_rest'  => true,
-      'menu_position' => 05,
-      'menu_icon'     => 'dashicons-media-document',
-      'supports'      => [
-        'title',
-      ]
-    ]
-  );
+require_once(__DIR__ . '/include/custom_posts/PostTypesRegister.class.php');
 
-  register_post_type(
-    POST_URGENT_NOTICE,
-    [
-      'label'         => '緊急告知',
-      'public'        => true,
-      'has_archive'   => false,
-      'show_in_rest'  => true,
-      'menu_position' => 05,
-      'menu_icon'     => 'dashicons-warning',
-      'supports'      => [
-        'title',
-        'editor'
-      ]
-    ]
-  );
-
-  register_post_type(
-    POST_NOTICE,
-    [
-      'label'         => 'お知らせ',
-      'public'        => true,
-      'has_archive'   => true,
-      'show_in_rest'  => true,
-      'menu_position' => 05,
-      'menu_icon'     => 'dashicons-bell',
-      'supports'      => [
-        'title',
-        'editor'
-      ]
-    ]
-  );
-}
+new custom_post\PostTypesRegister();
 
 
 /** ************************************************************************

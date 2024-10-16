@@ -8,6 +8,7 @@ import "flowbite";
 
 // import { drawerToggle } from "./drawerMenu";
 import { fixHeaderByScroll } from "./fixHeaderByScroll";
+import { handleAdminBarOverlap } from "./handleAdminBarOverlap";
 
 // entry point
 document.addEventListener("DOMContentLoaded", () => {
@@ -17,4 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // drawerToggle();
   fixHeaderByScroll("js_fixableHeader");
+
+  // アドミンバーに fixed な要素が隠れる問題の、css だけでは対応不可能な、600px以下の absolute なアドミンバーに合わせて top 値を変える処理。
+  handleAdminBarOverlap("js_drawerButton");
 });

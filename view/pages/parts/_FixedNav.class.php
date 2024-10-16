@@ -8,11 +8,25 @@ class FixedNav
   function render()
   {
 ?>
-    <nav class="fixed top-0 sm:top-12 md:top-8 inset-x-0 w-full h-12" aria-hidden="true">
+    <nav id="js_fixableHeader" class="bl_stickyHeaderNav" aria-hidden="true">
       <ul class="flex gap-6 justify-center">
-        <li>item</li>
-        <li>item</li>
-        <li>item</li>
+        <?php
+        foreach (NAV_MENU_ITEMS as $item) {
+        ?>
+          <li class="flex gap-2 align-middle justify-start">
+            <a href="<?= $item->href ?>" class="text-lg">
+              <img
+                src="<?= $item->icon ?>"
+                width="36"
+                height="36"
+                class="inline"
+                alt="" />
+              <span><?= $item->title ?></span>
+            </a>
+          </li>
+        <?php
+        }
+        ?>
       </ul>
     </nav>
 <?php

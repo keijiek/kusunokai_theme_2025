@@ -5,42 +5,65 @@ main {
   min-height: 100vh;
 }
 
-.el_wholeWrap {
-  height: 100%;
-}
-
-/*
-全体の background image
-*/
-.hp_backwardBg {
-  background-blend-mode: lighten;
-  background-color: #ffffff66;
-  background-image: url(../images/body_bg.png);
-  background-repeat: repeat-y;
-  background-size: cover;
-  background-position: top center;
-  background-attachment: fixed;
-}
-
-.hp_FrontwardBg {
-  background-blend-mode: lighten;
-  background-color: #ffffff00;
-  background-image: url(../images/leaf_bird_4k.png),
-    url(../images/footer_bg.png);
-  background-size: contain, contain;
-  background-position: top, bottom;
-  background-repeat: no-repeat, no-repeat;
-}
-
 /*
 上端に fixed してスクロールに追尾する疑似 header の設定
 */
-.sticky_header {
+.bl_stickyHeaderNav {
+  visibility: hidden;
   position: fixed;
   top: 0;
   inset-inline: 0;
   transition: transform 0.25s ease-in-out 0s;
   transform: translateY(-100%);
+  background-color: #ccffcccc;
+  padding-block: 4px;
+}
+@media screen and (min-width: 1024px) {
+  .bl_stickyHeaderNav.js_active {
+    visibility: visible;
+    transform: translateY(0);
+  }
+  body:has(#wpadminbar) > .ly_wholeWrap > .bl_stickyHeaderNav.js_active {
+    transform: translateY(32px);
+  }
+}
+
+/*
+  ドロワーメニューのボタン(すまほのみ)
+*/
+.bl_drawerButton {
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: yellowgreen;
+  color: white;
+  height: 72px;
+  width: 72px;
+  display: grid;
+  place-items: center;
+}
+@media screen and (min-width: 1024px) {
+  .bl_drawerButton {
+    display: none;
+  }
+}
+body:has(#wpadminbar) > .ly_wholeWrap > .bl_drawerButton {
+  top: 32px;
+}
+@media screen and (max-width: 782px) {
+  body:has(#wpadminbar) > .ly_wholeWrap > .bl_drawerButton {
+    top: 46px;
+  }
+}
+@media screen and (max-width: 600px) {
+  body:has(#wpadminbar) > .ly_wholeWrap > .bl_drawerButton {
+    top: 0;
+  }
+}
+
+#js_drawerPanel {
+  display: none;
 }
 
 /* js で activate されて上から登場したheader のY軸上の座標を指定 */
@@ -48,12 +71,12 @@ main {
   transform: translateY(0);
 }
 /* アドミンバーが存在する場合、その高さ(32px)のぶん、Y軸上座標を修正 */
-body:has(#wpadminbar) > .el_relativeCotentWrap > .sticky_header.js_active {
+body:has(#wpadminbar) > .ly_wholeWrap > .sticky_header.js_active {
   transform: translateY(32px);
 }
 /* 横幅782以下ではアドミンバーの高さが46pxになるので、それに合わせてY軸上座標を修正 */
 @media screen and (max-width: 782px) {
-  body:has(#wpadminbar) > .el_relativeCotentWrap > .sticky_header.js_active {
+  body:has(#wpadminbar) > .ly_wholeWrap > .sticky_header.js_active {
     transform: translateY(46px);
   }
 }
